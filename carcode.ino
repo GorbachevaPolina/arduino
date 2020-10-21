@@ -6,20 +6,14 @@ void setup() {
   Serial3.begin(115200);
 }
 int x, y;
+byte mess[2];
 void loop() {
-  if (Serial3.available()>=2) {
-    x = Serial3.read();
-    if (x>100) {
-      x -= 256;
-    }
-    delay(10);
-    y = Serial3.read();
-    if (y>100) {
-      y -= 256;
-    }
+  if (Serial3.available()>1) {
+    Serial3.readBytes(mess, 2);
+    
     Serial.print("x:");
-    Serial.println(x);
+    Serial.println(int(mess[0])-100);
     Serial.print("y:");
-    Serial.println(y);
+    Serial.println(int(mess[1])-100);
   }
 }
