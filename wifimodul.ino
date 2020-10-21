@@ -2,8 +2,8 @@
 #include <WiFiClient.h>
 #include <WiFiUdp.h>
      
-const char* ssid = "Keenetic-3162";
-const char* password = "sfU6MA5R";
+const char* ssid = "Verizon-SM-G930V-7551";
+const char* password = "xxmv3820";
 unsigned int localPort = 5005;
 WiFiUDP Udp;
 char packetBuffer[255];
@@ -21,9 +21,6 @@ void setup(void){
 void loop(void){
   if (Udp.parsePacket()) {
     int n = Udp.read(packetBuffer, 255);
-    packetBuffer[n] = 0;
-    message = atoi(packetBuffer);
-    //Serial.write(message);
-    Serial.println(message);
+    Serial.write(packetBuffer, 2);
   }
 }
