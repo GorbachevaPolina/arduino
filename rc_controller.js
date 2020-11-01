@@ -1,8 +1,7 @@
 //websocket
-var connect = new WebSocket("ws://" + "192.168.43.188:5679"); 
+var connect = new WebSocket("ws://" + "192.168.43.188:5679");
 connect.onopen = function() {
   alert('connection established');
-  connect.send('Connect ' + new Date());
 }
 connect.onerror = function(err){
   alert('websocket error: ', err);
@@ -37,7 +36,7 @@ document.getElementById("y_coords").innerText = 0;
 var width, height, radius, x_center, y_center;
 width = window.innerWidth;
 radius = 100;
-height = 700;
+height = 900;
 ctx.canvas.width = width;
 ctx.canvas.height = height;
 background();
@@ -66,7 +65,6 @@ var start_drawing = false;
 function getPosition(event) {
     coord.x = event.clientX - canvas.offsetLeft;
     coord.y = event.clientY - canvas.offsetTop;
-    //console.log('clientX: ' + clientX + ' coord.x: ' + coord.x);
 }
 
 function startDrawing(event) {
@@ -95,21 +93,52 @@ function Draw(event) {
         background();
         var x, y;
 
-        if (Math.pow(radius, 2) >= Math.pow(coord.x - x_center, 2) + Math.pow(coord.y - y_center, 2)) {
+        if ((Math.abs(coord.x - x_center) + Math.abs(coord.y - y_center)) <= radius) {
             x = coord.x;
             y = coord.y;
         }
-        else {
-            x = radius * Math.cos(Math.atan2((coord.y - y_center), (coord.x - x_center))) + x_center;
-            y = radius * Math.sin(Math.atan2((coord.y - y_center), (coord.x - x_center))) + y_center;
+        else
+        {
+            var xAxis = coord.x-x_center;
+            var yAxis = coord.y-y_center;
+
+            var x1, x2, y1, y2;
+            if(xAxis >= 0 && yAxis >= 0) {
+              x1 = 0;
+              y1 = 100;
+              x2 = 100;
+              y2 = 0;
+            }
+            if(xAxis >= 0 && yAxis <= 0) {
+              x1 = 0;
+              y1 = -100;
+              x2 = 100;
+              y2 = 0;
+            }
+            if(xAxis <= 0 && yAxis >= 0) {
+              x1 = -100;
+              y1 = 0;
+              x2 = 0;
+              y2 = 100;
+            }
+            if(xAxis <= 0 && yAxis <= 0) {
+              x1 = -100;
+              y1 = 0;
+              x2 = 0;
+              y2 = -100;
+            }
+
+            var k1 = (yAxis / xAxis);
+            var k2 = (y2 - y1) / (x2 - x1);
+            x = Math.round((y1 - k2*x1) / (k1 - k2)) + x_center;
+            y = Math.round(k1 * ((y1 - k2*x1) / (k1 - k2))) + y_center;
+            if (isNaN(y)) y = (coord.y-y_center < 0) ? 200 : 400;
         }
         joystick(x, y);
-
         getPosition(event);
-
         document.getElementById("x_coords").innerText = Math.round(x - x_center);
-        document.getElementById("y_coords").innerText = Math.round(y - y_center);
-        //console.log(Math.round(x - x_center));
-        sendData(Math.round(x - x_center), Math.round(y - y_center));
+        document.getElementById("y_coords").innerText = -Math.round(y - y_center);
+
+        sendData(Math.round(x - x_center), -Math.round(y - y_center));
       }
 }
