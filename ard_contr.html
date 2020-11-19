@@ -5,6 +5,13 @@
     <meta charset="utf-8">
 </head>
 <body  style="position: fixed; font-size: xx-large;">
+  <div>
+    <button onclick="stopCar()" style="border-radius: 10px; width:100px; height: 40px">STOP</button>
+  </div>
+  <div>
+    <button onclick="connectToWebSocket()" style="border-radius: 10px; width:100px; height: 40px">CONNECT</button>
+    <button onclick="disconnectFromWebSocket()" style="border-radius: 10px; width:110px; height: 40px">DISCONNECT</button>
+  </div>
     <p style="text-align: center;">
         X: <span id="x_coords"> </span>
         Y: <span id="y_coords"> </span>

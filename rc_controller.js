@@ -1,5 +1,5 @@
 //websocket
-var connect = new WebSocket("ws://" + "192.168.43.188:5679");
+/*var connect = new WebSocket("ws://" + "192.168.43.188:5679");
 connect.onopen = function() {
   alert('connection established');
 }
@@ -19,8 +19,52 @@ function sendData(x, y){
   var data = {'x':x, 'y':y};
   data = JSON.stringify(data);
   connect.send(data);
+}*/
+var isConnected = false;
+
+function stopCar() {
+  //console.log('stop');
+  if(isConnected)
+    sendData(0,0);
 }
 
+var connect;
+function connectToWebSocket() {
+  connect = new WebSocket("ws://" + "192.168.43.188:5679");
+  connect.onopen = function() {
+    alert('connection established');
+    isConnected = true;
+  }
+  connect.onerror = function(err){
+    alert('websocket error ', err);
+  }
+  connect.onmessage = function(e){
+    alert('server data: ', e.data);
+  }
+  /*connect.onclose = function(e) {
+    if(e.wasClean)
+      alert('connection is closed');
+    else
+      alert('connection was interrupted');
+  }*/
+}
+
+function disconnectFromWebSocket() {
+  connect.close();
+  connect.onclose = function(e) {
+    if(e.wasClean)
+      alert('connection is closed');
+    else
+      alert('connection was interrupted');
+  }
+}
+
+function sendData(x, y){
+  //console.log('x: ' + x + ' y: ' + y);
+  var data = {'x':x, 'y':y};
+  data = JSON.stringify(data);
+  connect.send(data);
+}
 
 //joystick
 var canvas, ctx;
@@ -139,6 +183,7 @@ function Draw(event) {
         document.getElementById("x_coords").innerText = Math.round(x - x_center);
         document.getElementById("y_coords").innerText = -Math.round(y - y_center);
 
-        sendData(Math.round(x - x_center), -Math.round(y - y_center));
+        if(isConnected)
+            sendData(Math.round(x - x_center), -Math.round(y - y_center));
       }
 }
