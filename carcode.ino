@@ -16,6 +16,9 @@ void setup() {
   pinMode(pwmB, OUTPUT);
   pinMode(breakA, OUTPUT);
   pinMode(breakB, OUTPUT);
+  
+  analogWrite(breakA, 0);
+  analogWrite(breakB, 0);
 }
 int x, y;
 byte mess[2];
@@ -25,12 +28,9 @@ void loop() {
 
     x = int(mess[0])-100;
     y = int(mess[1])-100;
-
+    
     go('a', y + x); //left motor
     go('b', y - x); //right motor
-
-  analogWrite(breakA, 0);
-  analogWrite(breakB, 0);
   }
 }
 
@@ -40,6 +40,7 @@ void go(char motor, int velocity) {
   if(velocity > 0)
   {
     motorSpeed = map(velocity, 0, 100, 0, 255);
+    Serial.println(motorSpeed);
     if (motor == 'a') 
     {
       digitalWrite(dirA, HIGH);
